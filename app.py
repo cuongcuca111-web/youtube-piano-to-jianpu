@@ -871,6 +871,12 @@ async def export_midi(song_data: Dict[str, Any]):
 # Mount static files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+@app.get("/healthz")
+@app.get("/api/health")
+async def health_check():
+    """Health check endpoint for Render / cloud deployment"""
+    return {"status": "ok", "app": "youtube-piano-to-jianpu"}
+
 @app.get("/")
 async def serve_index():
     index_path = os.path.join(STATIC_DIR, "index.html")
@@ -880,4 +886,5 @@ async def serve_index():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=False)
