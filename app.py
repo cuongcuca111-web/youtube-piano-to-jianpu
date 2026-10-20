@@ -33,6 +33,20 @@ if FFMPEG_BIN and os.path.dirname(FFMPEG_BIN) not in os.environ.get("PATH", ""):
 NODE_CANDIDATE = r"C:\Program Files\nodejs\node.exe"
 NODE_BIN = shutil.which("node") or (NODE_CANDIDATE if os.path.exists(NODE_CANDIDATE) else None)
 
+# Load .env file if present
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+env_file = os.path.join(BASE_DIR, ".env")
+if os.path.exists(env_file):
+    try:
+        with open(env_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    os.environ[k.strip()] = v.strip().strip('"').strip("'")
+    except Exception as e:
+        pass
+
 from music_engine import (
     midi_to_jianpu,
     format_jianpu_text,
@@ -194,6 +208,28 @@ async def favicon():
 @app.get("/api/health")
 async def health_check():
     return {"status": "ok", "app": "youtube-piano-to-jianpu", "version": "1.0.0"}
+
+class SaveKeyRequest(BaseModel):
+    apiKey: str
+
+@app.post("/api/save-key")
+async def save_api_key(req: SaveKeyRequest):
+    key = req.apiKey.strip()
+    if not key:
+        raise HTTPException(status_code=400, detail="API Key không được để trống")
+    os.environ["GEMINI_API_KEY"] = key
+    try:
+        env_path = os.path.join(BASE_DIR, ".env")
+        with open(env_path, "w", encoding="utf-8") as f:
+            f.write(f"GEMINI_API_KEY={key}\n")
+    except Exception as e:
+        logger.warning(f"Could not write .env: {e}")
+    return {"status": "ok", "message": "Đã lưu Gemini API Key thành công!"}
+
+@app.get("/api/key-status")
+async def get_key_status():
+    has_key = bool(os.environ.get("GEMINI_API_KEY", "").strip())
+    return {"configured": has_key}
 
 @app.get("/api/samples")
 async def get_sample_songs():
@@ -416,7 +452,14 @@ async def transcribe_youtube(req: TranscribeRequest):
                 audio_file_path = downloaded_files[0]
                 logger.info(f"Audio downloaded to: {audio_file_path}")
                 # Call Gemini Transcriber
-                gemini_result = transcribe_with_gemini(audio_file_path, api_key, song_title=video_title)
+                gemini_result = transcribe_with_gemini(
+                    audio_file_path,
+                    api_key,
+                    song_title=video_title,
+                    start_time=req.startTime or 0.0,
+                    end_time=req.endTime,
+                    ffmpeg_bin=FFMPEG_BIN
+                )
                 
                 # Cleanup audio file
                 try:
@@ -586,7 +629,8 @@ async def transcribe_youtube_stream(req: TranscribeRequest):
                         api_key,
                         video_title,
                         req.startTime or 0.0,
-                        req.endTime
+                        req.endTime,
+                        FFMPEG_BIN
                     )
                 except Exception as g_err:
                     logger.warning(f"Gemini transcription failed ({g_err}), falling back to database/pattern analysis.")

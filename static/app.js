@@ -133,26 +133,49 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // API Key Modal & UI
-function initApiKeyUI() {
+async function initApiKeyUI() {
     const keyInput = document.getElementById('api-key-input');
     const keyStatus = document.getElementById('key-status-badge');
     
+    // Check server key status
+    try {
+        const sRes = await fetch('/api/key-status');
+        if (sRes.ok) {
+            const sData = await sRes.json();
+            if (sData.configured && !state.geminiApiKey) {
+                state.geminiApiKey = 'SERVER_ENV';
+            }
+        }
+    } catch (e) {}
+
     if (state.geminiApiKey) {
-        keyInput.value = state.geminiApiKey;
-        keyStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Gemini AI Sẵn Sàng';
-        keyStatus.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950 text-emerald-300 border border-emerald-700/50 cursor-pointer';
+        if (state.geminiApiKey !== 'SERVER_ENV') {
+            keyInput.value = state.geminiApiKey;
+        }
+        keyStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Gemini AI: Đã kết nối ✓';
+        keyStatus.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950 text-emerald-300 border border-emerald-700/50 cursor-pointer hover:bg-emerald-900/60 transition';
     }
 
-    document.getElementById('save-api-key-btn').addEventListener('click', () => {
+    document.getElementById('save-api-key-btn').addEventListener('click', async () => {
         const key = keyInput.value.trim();
         state.geminiApiKey = key;
         localStorage.setItem('gemini_api_key', key);
         if (key) {
-            keyStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5"></span> Gemini AI Sẵn Sàng';
-            keyStatus.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950 text-emerald-300 border border-emerald-700/50 cursor-pointer';
+            keyStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Gemini AI: Đã kết nối ✓';
+            keyStatus.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950 text-emerald-300 border border-emerald-700/50 cursor-pointer hover:bg-emerald-900/60 transition';
+            // Save to server .env
+            try {
+                await fetch('/api/save-key', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ apiKey: key })
+                });
+            } catch (err) {
+                console.warn("Could not persist key to server .env:", err);
+            }
         } else {
-            keyStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span> Chưa nhập API Key (Dùng CSDL / Heuristic)';
-            keyStatus.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-950 text-amber-300 border border-amber-700/50 cursor-pointer';
+            keyStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span> Cấu hình Gemini AI (Chưa nhập)';
+            keyStatus.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-950 text-amber-300 border border-amber-700/50 cursor-pointer hover:bg-amber-900/60 transition';
         }
         closeApiKeyModal();
     });
@@ -781,7 +804,7 @@ async function transcribeYouTube(url, startTime = 0, endTime = null) {
 
     const payload = {
         url: url,
-        gemini_api_key: state.geminiApiKey,
+        gemini_api_key: state.geminiApiKey === 'SERVER_ENV' ? '' : state.geminiApiKey,
         keySignature: `1=${state.rootKey}`,
         mode: state.handMode,
         startTime: startTime || 0,
