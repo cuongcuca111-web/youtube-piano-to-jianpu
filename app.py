@@ -42,6 +42,7 @@ from music_engine import (
 from sample_database import SAMPLE_SONGS, match_sample_song
 from gemini_transcriber import transcribe_with_gemini
 from midi_converter import parse_midi_to_jianpu, export_jianpu_to_midi
+from dsp_transcriber import transcribe_audio_dsp
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("jianpu_app")
@@ -441,7 +442,29 @@ async def transcribe_youtube(req: TranscribeRequest):
         res["playableTimeline"] = generate_playable_timeline(res)
         return res
 
-    # Fallback to Canon in D or first sample with the video's title
+    # Transcribe real audio pitches using DSP Frequency Analysis Engine
+    try:
+        audio_file_path = await asyncio.to_thread(download_audio_file_sync, url, video_id)
+        if audio_file_path and os.path.exists(audio_file_path) and FFMPEG_BIN:
+            dsp_res = await asyncio.to_thread(
+                transcribe_audio_dsp,
+                audio_file_path,
+                FFMPEG_BIN,
+                video_title,
+                req.startTime or 0.0,
+                req.endTime,
+                req.keySignature
+            )
+            dsp_res["videoTitle"] = video_title
+            dsp_res["channel"] = video_channel
+            dsp_res["thumbnail"] = video_thumbnail
+            dsp_res["duration"] = video_duration
+            dsp_res["playableTimeline"] = generate_playable_timeline(dsp_res)
+            return dsp_res
+    except Exception as dsp_err:
+        logger.warning(f"DSP transcription failed ({dsp_err})")
+
+    # Ultimate fallback only if audio decoding fails
     default_sample = dict(SAMPLE_SONGS["canon_in_d"])
     default_sample["title"] = video_title
     default_sample["videoTitle"] = video_title
@@ -575,8 +598,29 @@ async def transcribe_youtube_stream(req: TranscribeRequest):
         if matched_sample:
             res = dict(matched_sample)
         else:
-            res = dict(SAMPLE_SONGS["canon_in_d"])
-            res["title"] = video_title
+            # Transcribe real audio using DSP Frequency Analysis Engine!
+            dsp_success = False
+            try:
+                audio_file_path = await asyncio.to_thread(download_audio_file_sync, url, video_id)
+                if audio_file_path and os.path.exists(audio_file_path) and FFMPEG_BIN:
+                    yield f"data: {json.dumps({'percent': 85, 'step': 3, 'stage': 'pitch_extracting', 'stageName': 'Bóc tách nốt thực tế', 'message': 'Đang quét và bóc tách cao độ thực tế từ âm thanh video...'}, ensure_ascii=False)}\n\n"
+                    dsp_res = await asyncio.to_thread(
+                        transcribe_audio_dsp,
+                        audio_file_path,
+                        FFMPEG_BIN,
+                        video_title,
+                        req.startTime or 0.0,
+                        req.endTime,
+                        req.keySignature
+                    )
+                    res = dsp_res
+                    dsp_success = True
+            except Exception as dsp_err:
+                logger.warning(f"DSP transcription stream error ({dsp_err})")
+
+            if not dsp_success:
+                res = dict(SAMPLE_SONGS["canon_in_d"])
+                res["title"] = video_title
 
         # Apply trimming to measures if requested
         start_t = float(req.startTime or 0.0)

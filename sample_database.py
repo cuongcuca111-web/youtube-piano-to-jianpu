@@ -440,6 +440,112 @@ SAMPLE_SONGS: Dict[str, Dict[str, Any]] = {
                 ]
             }
         ]
+    },
+    "victory": {
+        "id": "victory",
+        "title": "Victory - Two Steps From Hell",
+        "artist": "Thomas Bergersen",
+        "keySignature": "1=D",
+        "timeSignature": "4/4",
+        "tempo": 104,
+        "youtubeSampleUrl": "https://www.youtube.com/watch?v=qySMrhVacQ8",
+        "measures": [
+            {
+                "measureNumber": 1,
+                "rightHand": [
+                    {"number": "6", "octave": -1, "duration": 1.0, "display_text": "6̣", "midi": 59},
+                    {"number": "1", "octave": 0, "duration": 1.0, "display_text": "1", "midi": 62},
+                    {"number": "2", "octave": 0, "duration": 1.0, "display_text": "2", "midi": 64},
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 66}
+                ],
+                "leftHand": [
+                    {"number": "6", "octave": -2, "duration": 2.0, "display_text": "6̤", "midi": 47},
+                    {"number": "3", "octave": -2, "duration": 2.0, "display_text": "3̤", "midi": 42}
+                ]
+            },
+            {
+                "measureNumber": 2,
+                "rightHand": [
+                    {"number": "2", "octave": 0, "duration": 1.5, "display_text": "2", "midi": 64},
+                    {"number": "1", "octave": 0, "duration": 0.5, "display_text": "1", "midi": 62},
+                    {"number": "6", "octave": -1, "duration": 2.0, "display_text": "6̣", "midi": 59}
+                ],
+                "leftHand": [
+                    {"number": "4", "octave": -2, "duration": 2.0, "display_text": "4̤", "midi": 43},
+                    {"number": "1", "octave": -1, "duration": 2.0, "display_text": "1̣", "midi": 50}
+                ]
+            },
+            {
+                "measureNumber": 3,
+                "rightHand": [
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 66},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 69},
+                    {"number": "6", "octave": 0, "duration": 2.0, "display_text": "6", "midi": 71}
+                ],
+                "leftHand": [
+                    {"number": "1", "octave": -1, "duration": 2.0, "display_text": "1̣", "midi": 50},
+                    {"number": "5", "octave": -2, "duration": 2.0, "display_text": "5̤", "midi": 45}
+                ]
+            },
+            {
+                "measureNumber": 4,
+                "rightHand": [
+                    {"number": "5", "octave": 0, "duration": 1.5, "display_text": "5", "midi": 69},
+                    {"number": "3", "octave": 0, "duration": 0.5, "display_text": "3", "midi": 66},
+                    {"number": "2", "octave": 0, "duration": 2.0, "display_text": "2", "midi": 64}
+                ],
+                "leftHand": [
+                    {"number": "5", "octave": -2, "duration": 2.0, "display_text": "5̤", "midi": 45},
+                    {"number": "2", "octave": -2, "duration": 2.0, "display_text": "2̤", "midi": 40}
+                ]
+            },
+            {
+                "measureNumber": 5,
+                "rightHand": [
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 66},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 69},
+                    {"number": "6", "octave": 0, "duration": 1.0, "display_text": "6", "midi": 71},
+                    {"number": "7", "octave": 0, "duration": 1.0, "display_text": "7", "midi": 73}
+                ],
+                "leftHand": [
+                    {"number": "6", "octave": -2, "duration": 4.0, "display_text": "6̤", "midi": 47}
+                ]
+            },
+            {
+                "measureNumber": 6,
+                "rightHand": [
+                    {"number": "1", "octave": 1, "duration": 1.5, "display_text": "1̇", "midi": 74},
+                    {"number": "7", "octave": 0, "duration": 0.5, "display_text": "7", "midi": 73},
+                    {"number": "6", "octave": 0, "duration": 1.0, "display_text": "6", "midi": 71},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 69}
+                ],
+                "leftHand": [
+                    {"number": "4", "octave": -2, "duration": 4.0, "display_text": "4̤", "midi": 43}
+                ]
+            },
+            {
+                "measureNumber": 7,
+                "rightHand": [
+                    {"number": "6", "octave": 0, "duration": 2.0, "display_text": "6", "midi": 71},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 69},
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 66}
+                ],
+                "leftHand": [
+                    {"number": "1", "octave": -1, "duration": 4.0, "display_text": "1̣", "midi": 50}
+                ]
+            },
+            {
+                "measureNumber": 8,
+                "rightHand": [
+                    {"number": "2", "octave": 0, "duration": 1.5, "display_text": "2", "midi": 64},
+                    {"number": "3", "octave": 0, "duration": 0.5, "display_text": "3", "midi": 66},
+                    {"number": "2", "octave": 0, "duration": 2.0, "display_text": "2", "midi": 64}
+                ],
+                "leftHand": [
+                    {"number": "5", "octave": -2, "duration": 4.0, "display_text": "5̤", "midi": 45}
+                ]
+            }
+        ]
     }
 }
 
