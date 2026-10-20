@@ -443,9 +443,9 @@ SAMPLE_SONGS: Dict[str, Dict[str, Any]] = {
     },
     "victory": {
         "id": "victory",
-        "title": "Victory - Two Steps From Hell",
-        "artist": "Thomas Bergersen",
-        "keySignature": "1=D",
+        "title": "Two Steps From Hell - Victory (Piano Tutorial)",
+        "artist": "Thomas Bergersen (Two Steps From Hell)",
+        "keySignature": "1=F",
         "timeSignature": "4/4",
         "tempo": 104,
         "youtubeSampleUrl": "https://www.youtube.com/watch?v=qySMrhVacQ8",
@@ -453,96 +453,270 @@ SAMPLE_SONGS: Dict[str, Dict[str, Any]] = {
             {
                 "measureNumber": 1,
                 "rightHand": [
-                    {"number": "6", "octave": -1, "duration": 1.0, "display_text": "6̣", "midi": 59},
-                    {"number": "1", "octave": 0, "duration": 1.0, "display_text": "1", "midi": 62},
-                    {"number": "2", "octave": 0, "duration": 1.0, "display_text": "2", "midi": 64},
-                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 66}
+                    {"number": "6", "octave": -1, "duration": 4.0, "display_text": "6̣", "midi": 62, "note_name": "D4"}
                 ],
                 "leftHand": [
-                    {"number": "6", "octave": -2, "duration": 2.0, "display_text": "6̤", "midi": 47},
-                    {"number": "3", "octave": -2, "duration": 2.0, "display_text": "3̤", "midi": 42}
+                    {"number": "6", "octave": -2, "duration": 2.0, "display_text": "6̤", "midi": 50, "note_name": "D3"},
+                    {"number": "6", "octave": -2, "duration": 2.0, "display_text": "6̤", "midi": 50, "note_name": "D3"}
                 ]
             },
             {
                 "measureNumber": 2,
                 "rightHand": [
-                    {"number": "2", "octave": 0, "duration": 1.5, "display_text": "2", "midi": 64},
-                    {"number": "1", "octave": 0, "duration": 0.5, "display_text": "1", "midi": 62},
-                    {"number": "6", "octave": -1, "duration": 2.0, "display_text": "6̣", "midi": 59}
+                    {"number": "1", "octave": 0, "duration": 2.0, "display_text": "1", "midi": 65, "note_name": "F4"},
+                    {"number": "2", "octave": 0, "duration": 1.0, "display_text": "2", "midi": 67, "note_name": "G4"},
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 69, "note_name": "A4"}
                 ],
                 "leftHand": [
-                    {"number": "4", "octave": -2, "duration": 2.0, "display_text": "4̤", "midi": 43},
-                    {"number": "1", "octave": -1, "duration": 2.0, "display_text": "1̣", "midi": 50}
+                    {"number": "6", "octave": -2, "duration": 2.0, "display_text": "6̤", "midi": 50, "note_name": "D3"},
+                    {"number": "6", "octave": -2, "duration": 2.0, "display_text": "6̤", "midi": 50, "note_name": "D3"}
                 ]
             },
             {
                 "measureNumber": 3,
                 "rightHand": [
-                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 66},
-                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 69},
-                    {"number": "6", "octave": 0, "duration": 2.0, "display_text": "6", "midi": 71}
+                    {"number": "2", "octave": 0, "duration": 1.5, "display_text": "2", "midi": 67, "note_name": "G4"},
+                    {"number": "1", "octave": 0, "duration": 0.5, "display_text": "1", "midi": 65, "note_name": "F4"},
+                    {"number": "6", "octave": -1, "duration": 2.0, "display_text": "6̣", "midi": 62, "note_name": "D4"}
                 ],
                 "leftHand": [
-                    {"number": "1", "octave": -1, "duration": 2.0, "display_text": "1̣", "midi": 50},
-                    {"number": "5", "octave": -2, "duration": 2.0, "display_text": "5̤", "midi": 45}
+                    {"number": "4", "octave": -2, "duration": 2.0, "display_text": "4̤", "midi": 46, "note_name": "Bb2"},
+                    {"number": "1", "octave": -1, "duration": 2.0, "display_text": "1̣", "midi": 53, "note_name": "F3"}
                 ]
             },
             {
                 "measureNumber": 4,
                 "rightHand": [
-                    {"number": "5", "octave": 0, "duration": 1.5, "display_text": "5", "midi": 69},
-                    {"number": "3", "octave": 0, "duration": 0.5, "display_text": "3", "midi": 66},
-                    {"number": "2", "octave": 0, "duration": 2.0, "display_text": "2", "midi": 64}
+                    {"number": "0", "octave": 0, "duration": 4.0, "display_text": "0", "midi": 0, "note_name": "Rest"}
                 ],
                 "leftHand": [
-                    {"number": "5", "octave": -2, "duration": 2.0, "display_text": "5̤", "midi": 45},
-                    {"number": "2", "octave": -2, "duration": 2.0, "display_text": "2̤", "midi": 40}
+                    {"number": "4", "octave": -2, "duration": 4.0, "display_text": "4̤", "midi": 46, "note_name": "Bb2"}
                 ]
             },
             {
                 "measureNumber": 5,
                 "rightHand": [
-                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 66},
-                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 69},
-                    {"number": "6", "octave": 0, "duration": 1.0, "display_text": "6", "midi": 71},
-                    {"number": "7", "octave": 0, "duration": 1.0, "display_text": "7", "midi": 73}
+                    {"number": "6", "octave": -1, "duration": 1.0, "display_text": "6̣", "midi": 62, "note_name": "D4"},
+                    {"number": "1", "octave": 0, "duration": 1.0, "display_text": "1", "midi": 65, "note_name": "F4"},
+                    {"number": "2", "octave": 0, "duration": 1.0, "display_text": "2", "midi": 67, "note_name": "G4"},
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 69, "note_name": "A4"}
                 ],
                 "leftHand": [
-                    {"number": "6", "octave": -2, "duration": 4.0, "display_text": "6̤", "midi": 47}
+                    {"number": "6", "octave": -2, "duration": 4.0, "display_text": "6̤", "midi": 50, "note_name": "D3"}
                 ]
             },
             {
                 "measureNumber": 6,
                 "rightHand": [
-                    {"number": "1", "octave": 1, "duration": 1.5, "display_text": "1̇", "midi": 74},
-                    {"number": "7", "octave": 0, "duration": 0.5, "display_text": "7", "midi": 73},
-                    {"number": "6", "octave": 0, "duration": 1.0, "display_text": "6", "midi": 71},
-                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 69}
+                    {"number": "2", "octave": 0, "duration": 1.5, "display_text": "2", "midi": 67, "note_name": "G4"},
+                    {"number": "1", "octave": 0, "duration": 0.5, "display_text": "1", "midi": 65, "note_name": "F4"},
+                    {"number": "6", "octave": -1, "duration": 2.0, "display_text": "6̣", "midi": 62, "note_name": "D4"}
                 ],
                 "leftHand": [
-                    {"number": "4", "octave": -2, "duration": 4.0, "display_text": "4̤", "midi": 43}
+                    {"number": "4", "octave": -2, "duration": 4.0, "display_text": "4̤", "midi": 46, "note_name": "Bb2"}
                 ]
             },
             {
                 "measureNumber": 7,
                 "rightHand": [
-                    {"number": "6", "octave": 0, "duration": 2.0, "display_text": "6", "midi": 71},
-                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 69},
-                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 66}
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 69, "note_name": "A4"},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 72, "note_name": "C5"},
+                    {"number": "6", "octave": 0, "duration": 2.0, "display_text": "6", "midi": 74, "note_name": "D5"}
                 ],
                 "leftHand": [
-                    {"number": "1", "octave": -1, "duration": 4.0, "display_text": "1̣", "midi": 50}
+                    {"number": "1", "octave": -1, "duration": 4.0, "display_text": "1̣", "midi": 53, "note_name": "F3"}
                 ]
             },
             {
                 "measureNumber": 8,
                 "rightHand": [
-                    {"number": "2", "octave": 0, "duration": 1.5, "display_text": "2", "midi": 64},
-                    {"number": "3", "octave": 0, "duration": 0.5, "display_text": "3", "midi": 66},
-                    {"number": "2", "octave": 0, "duration": 2.0, "display_text": "2", "midi": 64}
+                    {"number": "5", "octave": 0, "duration": 1.5, "display_text": "5", "midi": 72, "note_name": "C5"},
+                    {"number": "3", "octave": 0, "duration": 0.5, "display_text": "3", "midi": 69, "note_name": "A4"},
+                    {"number": "2", "octave": 0, "duration": 2.0, "display_text": "2", "midi": 67, "note_name": "G4"}
                 ],
                 "leftHand": [
-                    {"number": "5", "octave": -2, "duration": 4.0, "display_text": "5̤", "midi": 45}
+                    {"number": "5", "octave": -2, "duration": 4.0, "display_text": "5̤", "midi": 48, "note_name": "C3"}
+                ]
+            },
+            {
+                "measureNumber": 9,
+                "rightHand": [
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 69, "note_name": "A4"},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 72, "note_name": "C5"},
+                    {"number": "6", "octave": 0, "duration": 1.0, "display_text": "6", "midi": 74, "note_name": "D5"},
+                    {"number": "7", "octave": 0, "duration": 1.0, "display_text": "7", "midi": 76, "note_name": "E5"}
+                ],
+                "leftHand": [
+                    {"number": "6", "octave": -2, "duration": 4.0, "display_text": "6̤", "midi": 50, "note_name": "D3"}
+                ]
+            },
+            {
+                "measureNumber": 10,
+                "rightHand": [
+                    {"number": "1", "octave": 1, "duration": 1.5, "display_text": "1̇", "midi": 77, "note_name": "F5"},
+                    {"number": "7", "octave": 0, "duration": 0.5, "display_text": "7", "midi": 76, "note_name": "E5"},
+                    {"number": "6", "octave": 0, "duration": 1.0, "display_text": "6", "midi": 74, "note_name": "D5"},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 72, "note_name": "C5"}
+                ],
+                "leftHand": [
+                    {"number": "4", "octave": -2, "duration": 4.0, "display_text": "4̤", "midi": 46, "note_name": "Bb2"}
+                ]
+            },
+            {
+                "measureNumber": 11,
+                "rightHand": [
+                    {"number": "6", "octave": 0, "duration": 2.0, "display_text": "6", "midi": 74, "note_name": "D5"},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 72, "note_name": "C5"},
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 69, "note_name": "A4"}
+                ],
+                "leftHand": [
+                    {"number": "1", "octave": -1, "duration": 4.0, "display_text": "1̣", "midi": 53, "note_name": "F3"}
+                ]
+            },
+            {
+                "measureNumber": 12,
+                "rightHand": [
+                    {"number": "2", "octave": 0, "duration": 1.5, "display_text": "2", "midi": 67, "note_name": "G4"},
+                    {"number": "3", "octave": 0, "duration": 0.5, "display_text": "3", "midi": 69, "note_name": "A4"},
+                    {"number": "2", "octave": 0, "duration": 2.0, "display_text": "2", "midi": 67, "note_name": "G4"}
+                ],
+                "leftHand": [
+                    {"number": "5", "octave": -2, "duration": 4.0, "display_text": "5̤", "midi": 48, "note_name": "C3"}
+                ]
+            },
+            {
+                "measureNumber": 13,
+                "rightHand": [
+                    {"number": "6", "octave": -1, "duration": 1.0, "display_text": "6̣", "midi": 62, "note_name": "D4"},
+                    {"number": "1", "octave": 0, "duration": 1.0, "display_text": "1", "midi": 65, "note_name": "F4"},
+                    {"number": "2", "octave": 0, "duration": 1.0, "display_text": "2", "midi": 67, "note_name": "G4"},
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 69, "note_name": "A4"}
+                ],
+                "leftHand": [
+                    {"number": "6", "octave": -2, "duration": 2.0, "display_text": "6̤", "midi": 50, "note_name": "D3"},
+                    {"number": "3", "octave": -2, "duration": 2.0, "display_text": "3̤", "midi": 45, "note_name": "A2"}
+                ]
+            },
+            {
+                "measureNumber": 14,
+                "rightHand": [
+                    {"number": "2", "octave": 0, "duration": 1.5, "display_text": "2", "midi": 67, "note_name": "G4"},
+                    {"number": "1", "octave": 0, "duration": 0.5, "display_text": "1", "midi": 65, "note_name": "F4"},
+                    {"number": "6", "octave": -1, "duration": 2.0, "display_text": "6̣", "midi": 62, "note_name": "D4"}
+                ],
+                "leftHand": [
+                    {"number": "4", "octave": -2, "duration": 2.0, "display_text": "4̤", "midi": 46, "note_name": "Bb2"},
+                    {"number": "1", "octave": -2, "duration": 2.0, "display_text": "1̤", "midi": 41, "note_name": "F2"}
+                ]
+            },
+            {
+                "measureNumber": 15,
+                "rightHand": [
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 69, "note_name": "A4"},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 72, "note_name": "C5"},
+                    {"number": "6", "octave": 0, "duration": 2.0, "display_text": "6", "midi": 74, "note_name": "D5"}
+                ],
+                "leftHand": [
+                    {"number": "1", "octave": -1, "duration": 2.0, "display_text": "1̣", "midi": 53, "note_name": "F3"},
+                    {"number": "5", "octave": -2, "duration": 2.0, "display_text": "5̤", "midi": 48, "note_name": "C3"}
+                ]
+            },
+            {
+                "measureNumber": 16,
+                "rightHand": [
+                    {"number": "6", "octave": 0, "duration": 1.5, "display_text": "6", "midi": 74, "note_name": "D5"},
+                    {"number": "7", "octave": 0, "duration": 0.5, "display_text": "7", "midi": 76, "note_name": "E5"},
+                    {"number": "1", "octave": 1, "duration": 1.0, "display_text": "1̇", "midi": 77, "note_name": "F5"},
+                    {"number": "2", "octave": 1, "duration": 1.0, "display_text": "2̇", "midi": 79, "note_name": "G5"}
+                ],
+                "leftHand": [
+                    {"number": "5", "octave": -2, "duration": 2.0, "display_text": "5̤", "midi": 48, "note_name": "C3"},
+                    {"number": "2", "octave": -2, "duration": 2.0, "display_text": "2̤", "midi": 43, "note_name": "G2"}
+                ]
+            },
+            {
+                "measureNumber": 17,
+                "rightHand": [
+                    {"number": "3", "octave": 1, "duration": 2.0, "display_text": "3̇", "midi": 81, "note_name": "A5"},
+                    {"number": "2", "octave": 1, "duration": 1.0, "display_text": "2̇", "midi": 79, "note_name": "G5"},
+                    {"number": "1", "octave": 1, "duration": 1.0, "display_text": "1̇", "midi": 77, "note_name": "F5"}
+                ],
+                "leftHand": [
+                    {"number": "6", "octave": -2, "duration": 2.0, "display_text": "6̤", "midi": 50, "note_name": "D3"},
+                    {"number": "3", "octave": -2, "duration": 2.0, "display_text": "3̤", "midi": 45, "note_name": "A2"}
+                ]
+            },
+            {
+                "measureNumber": 18,
+                "rightHand": [
+                    {"number": "7", "octave": 0, "duration": 1.5, "display_text": "7", "midi": 76, "note_name": "E5"},
+                    {"number": "1", "octave": 1, "duration": 0.5, "display_text": "1̇", "midi": 77, "note_name": "F5"},
+                    {"number": "7", "octave": 0, "duration": 1.0, "display_text": "7", "midi": 76, "note_name": "E5"},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 72, "note_name": "C5"}
+                ],
+                "leftHand": [
+                    {"number": "4", "octave": -2, "duration": 2.0, "display_text": "4̤", "midi": 46, "note_name": "Bb2"},
+                    {"number": "1", "octave": -2, "duration": 2.0, "display_text": "1̤", "midi": 41, "note_name": "F2"}
+                ]
+            },
+            {
+                "measureNumber": 19,
+                "rightHand": [
+                    {"number": "6", "octave": 0, "duration": 2.0, "display_text": "6", "midi": 74, "note_name": "D5"},
+                    {"number": "5", "octave": 0, "duration": 1.0, "display_text": "5", "midi": 72, "note_name": "C5"},
+                    {"number": "3", "octave": 0, "duration": 1.0, "display_text": "3", "midi": 69, "note_name": "A4"}
+                ],
+                "leftHand": [
+                    {"number": "1", "octave": -1, "duration": 2.0, "display_text": "1̣", "midi": 53, "note_name": "F3"},
+                    {"number": "5", "octave": -2, "duration": 2.0, "display_text": "5̤", "midi": 48, "note_name": "C3"}
+                ]
+            },
+            {
+                "measureNumber": 20,
+                "rightHand": [
+                    {"number": "6", "octave": 0, "duration": 4.0, "display_text": "6", "midi": 74, "note_name": "D5"}
+                ],
+                "leftHand": [
+                    {"number": "6", "octave": -2, "duration": 4.0, "display_text": "6̤", "midi": 50, "note_name": "D3"}
+                ]
+            },
+            {
+                "measureNumber": 21,
+                "rightHand": [
+                    {"number": "3", "octave": 0, "duration": 2.0, "display_text": "3", "midi": 69, "note_name": "A4"},
+                    {"number": "2", "octave": 0, "duration": 2.0, "display_text": "2", "midi": 67, "note_name": "G4"}
+                ],
+                "leftHand": [
+                    {"number": "6", "octave": -2, "duration": 4.0, "display_text": "6̤", "midi": 50, "note_name": "D3"}
+                ]
+            },
+            {
+                "measureNumber": 22,
+                "rightHand": [
+                    {"number": "1", "octave": 0, "duration": 2.0, "display_text": "1", "midi": 65, "note_name": "F4"},
+                    {"number": "6", "octave": -1, "duration": 2.0, "display_text": "6̣", "midi": 62, "note_name": "D4"}
+                ],
+                "leftHand": [
+                    {"number": "4", "octave": -2, "duration": 4.0, "display_text": "4̤", "midi": 46, "note_name": "Bb2"}
+                ]
+            },
+            {
+                "measureNumber": 23,
+                "rightHand": [
+                    {"number": "7", "octave": -1, "duration": 2.0, "display_text": "7̣", "midi": 64, "note_name": "E4"},
+                    {"number": "5", "octave": -1, "duration": 2.0, "display_text": "5̣", "midi": 60, "note_name": "C4"}
+                ],
+                "leftHand": [
+                    {"number": "5", "octave": -2, "duration": 4.0, "display_text": "5̤", "midi": 48, "note_name": "C3"}
+                ]
+            },
+            {
+                "measureNumber": 24,
+                "rightHand": [
+                    {"number": "6", "octave": -1, "duration": 4.0, "display_text": "6̣", "midi": 62, "note_name": "D4"}
+                ],
+                "leftHand": [
+                    {"number": "6", "octave": -2, "duration": 4.0, "display_text": "6̤", "midi": 50, "note_name": "D3"}
                 ]
             }
         ]
@@ -552,6 +726,8 @@ SAMPLE_SONGS: Dict[str, Dict[str, Any]] = {
 def match_sample_song(query: str) -> Dict[str, Any] | None:
     """Matches user query or URL against known popular songs"""
     q = query.lower()
+    if "victory" in q or "qySMrhVacQ8" in query:
+        return SAMPLE_SONGS["victory"]
     for key, song in SAMPLE_SONGS.items():
         if key in q or song["title"].lower() in q or song["id"] in q:
             return song

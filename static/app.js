@@ -1008,8 +1008,14 @@ function renderSong(songData) {
     if (songData.thumbnail) {
         previewContainer.classList.remove('hidden');
         document.getElementById('video-thumb-img').src = songData.thumbnail;
-        document.getElementById('video-preview-title').textContent = songData.videoTitle || songData.title;
-        document.getElementById('video-preview-channel').textContent = songData.channel || "YouTube";
+        const vTitle = (songData.videoTitle && songData.videoTitle !== 'Bản Piano YouTube')
+            ? songData.videoTitle
+            : (songData.title || 'Bản Piano YouTube');
+        document.getElementById('video-preview-title').textContent = vTitle;
+        const vChannel = (songData.channel && songData.channel !== 'YouTube')
+            ? songData.channel
+            : (songData.artist || 'YouTube');
+        document.getElementById('video-preview-channel').textContent = vChannel;
     } else {
         previewContainer.classList.add('hidden');
     }

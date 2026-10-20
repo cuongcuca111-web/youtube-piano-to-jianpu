@@ -105,6 +105,10 @@ def trim_measures(
     if (start_sec is None or start_sec <= 0) and (end_sec is None or end_sec <= 0):
         return measures
 
+    # If start_sec <= 8.0s, the user trimmed video intro/countdown/silence.
+    # Preserve the opening measures of the song arrangement.
+    effective_start = 0.0 if (start_sec is not None and start_sec <= 8.0) else (start_sec or 0.0)
+
     num_beats = float(time_sig.split("/")[0]) if "/" in time_sig else 4.0
     sec_per_measure = (num_beats * 60.0) / max(20.0, tempo)
 
@@ -118,7 +122,7 @@ def trim_measures(
         include = True
         if end_sec is not None and end_sec > 0 and m_start >= end_sec:
             include = False
-        if m_end <= start_sec:
+        if m_end <= effective_start:
             include = False
 
         if include:
@@ -434,10 +438,34 @@ async def transcribe_youtube(req: TranscribeRequest):
     # If matched with database or fallback
     if matched_sample:
         res = dict(matched_sample)
-        res["videoTitle"] = video_title
-        res["channel"] = video_channel
+        if video_title != "Bản Piano YouTube":
+            res["videoTitle"] = video_title
+        else:
+            res["videoTitle"] = res.get("title", video_title)
+        if video_channel != "YouTube":
+            res["channel"] = video_channel
+        else:
+            res["channel"] = res.get("artist", video_channel)
         res["thumbnail"] = video_thumbnail
         res["duration"] = video_duration
+
+        # Apply trimming if requested
+        start_t = float(req.startTime or 0.0)
+        end_t = float(req.endTime) if req.endTime and req.endTime > 0 else None
+        if start_t > 0 or end_t is not None:
+            tempo_val = float(res.get("tempo", 80))
+            time_sig_val = res.get("timeSignature", "4/4")
+            res["measures"] = trim_measures(res.get("measures", []), tempo_val, time_sig_val, start_t, end_t)
+            s_min, s_sec = int(start_t // 60), int(start_t % 60)
+            e_val = end_t if end_t else float(video_duration)
+            e_min, e_sec = int(e_val // 60), int(e_val % 60)
+            res["trimmedInfo"] = {
+                "startTime": start_t,
+                "endTime": e_val,
+                "startStr": f"{s_min}:{s_sec:02d}",
+                "endStr": f"{e_min}:{e_sec:02d}"
+            }
+
         res["formattedText"] = format_jianpu_text(res)
         res["playableTimeline"] = generate_playable_timeline(res)
         return res
@@ -512,7 +540,7 @@ async def transcribe_youtube_stream(req: TranscribeRequest):
                 with yt_dlp.YoutubeDL(ydl_opts_info) as ydl:
                     return ydl.extract_info(url, download=False)
 
-            info = await asyncio.wait_for(asyncio.to_thread(fetch_quick), timeout=3.0)
+            info = await asyncio.wait_for(asyncio.to_thread(fetch_quick), timeout=8.0)
             if info:
                 video_title = info.get("title") or video_title
                 video_channel = info.get("uploader") or video_channel
@@ -521,10 +549,14 @@ async def transcribe_youtube_stream(req: TranscribeRequest):
         except Exception as e:
             logger.warning(f"Fast info fetch timeout/skip ({e}), using default metadata.")
 
+        matched_sample = match_sample_song(video_title) or match_sample_song(url)
+        if matched_sample and video_title == "Bản Piano YouTube":
+            video_title = matched_sample.get("title", video_title)
+            video_channel = matched_sample.get("artist", video_channel)
+
         yield f"data: {json.dumps({'percent': 20, 'step': 1, 'stage': 'metadata_ready', 'stageName': 'Thông tin video', 'message': f'Đã nhận diện: {video_title}', 'title': video_title, 'channel': video_channel, 'thumbnail': video_thumbnail, 'duration': video_duration}, ensure_ascii=False)}\n\n"
         await asyncio.sleep(0.15)
 
-        matched_sample = match_sample_song(video_title) or match_sample_song(url)
         api_key = (req.gemini_api_key or os.environ.get("GEMINI_API_KEY") or "").strip()
 
         # If Gemini API Key is provided, perform live download & transcription
@@ -639,8 +671,18 @@ async def transcribe_youtube_stream(req: TranscribeRequest):
                 "endStr": f"{e_min}:{e_sec:02d}"
             }
 
-        res["videoTitle"] = video_title
-        res["channel"] = video_channel
+        if matched_sample:
+            if video_title != "Bản Piano YouTube":
+                res["videoTitle"] = video_title
+            else:
+                res["videoTitle"] = res.get("title", video_title)
+            if video_channel != "YouTube":
+                res["channel"] = video_channel
+            else:
+                res["channel"] = res.get("artist", video_channel)
+        else:
+            res["videoTitle"] = video_title
+            res["channel"] = video_channel
         res["thumbnail"] = video_thumbnail
         res["duration"] = video_duration
         res["formattedText"] = format_jianpu_text(res)
