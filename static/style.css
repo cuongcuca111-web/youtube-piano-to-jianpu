@@ -1,0 +1,458 @@
+/* Jianpu Piano Styling */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Serif:wght@600;700&display=swap');
+
+:root {
+    --bg-dark: #0a0e17;
+    --card-bg: rgba(18, 24, 38, 0.75);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --accent-emerald: #10b981;
+    --accent-gold: #f59e0b;
+    --accent-blue: #3b82f6;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+/* Glassmorphism Card */
+.glass-panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-panel-hover {
+    transition: all 0.25s ease;
+}
+.glass-panel-hover:hover {
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 12px 40px 0 rgba(16, 185, 129, 0.15);
+}
+
+/* Progress Step States */
+.step-card.step-active {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.5) !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+.step-card.step-active .step-icon {
+    background: #10b981 !important;
+    color: #022c22 !important;
+    animation: pulse 1.5s infinite;
+}
+.step-card.step-active .step-status {
+    color: #34d399 !important;
+    font-weight: 700;
+}
+
+.step-card.step-completed {
+    background: rgba(16, 185, 129, 0.06) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+}
+.step-card.step-completed .step-icon {
+    background: #047857 !important;
+    color: #d1fae5 !important;
+}
+.step-card.step-completed .step-status {
+    color: #10b981 !important;
+}
+
+/* Waveform & Trimmer */
+.waveform-bar {
+    width: 3px;
+    background: #0d9488;
+    border-radius: 2px;
+    margin: 0 1.5px;
+    transition: height 0.15s ease;
+}
+
+.trim-handle {
+    user-select: none;
+    touch-action: none;
+    cursor: ew-resize;
+}
+
+.trim-handle:hover > div:first-child {
+    background: #2dd4bf !important;
+}
+
+/* Jianpu Sheet Music Display Area */
+.sheet-container {
+    background: #ffffff;
+    color: #111827;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    font-family: 'JetBrains Mono', 'Noto Serif', serif;
+}
+
+.sheet-title {
+    font-family: 'Noto Serif', serif;
+}
+
+/* Note block layout */
+.jianpu-note-block {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    padding: 2px 4px;
+    margin: 2px 3px;
+    border-radius: 6px;
+    position: relative;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+
+.jianpu-note-block.active-playing {
+    background-color: #fef08a !important; /* bright yellow spotlight */
+    transform: scale(1.18);
+    box-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
+    z-index: 10;
+}
+
+/* Octave dots above & below */
+.octave-dots-above {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 10px;
+    justify-content: flex-end;
+}
+
+.octave-dot {
+    width: 4px;
+    height: 4px;
+    background-color: currentColor;
+    border-radius: 50%;
+    margin-bottom: 2px;
+}
+
+.octave-dots-below {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 10px;
+    justify-content: flex-start;
+}
+
+.note-digit {
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1.1;
+    position: relative;
+}
+
+.note-accidental {
+    font-size: 0.95rem;
+    position: absolute;
+    left: -10px;
+    top: -2px;
+    font-weight: 600;
+}
+
+/* Rhythm underlines */
+.rhythm-underlines {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 1px;
+}
+
+.rhythm-line {
+    height: 2px;
+    background-color: currentColor;
+    width: 100%;
+    margin-top: 1.5px;
+}
+
+/* Pitch badge (e.g. C4, D4) for beginners */
+.pitch-badge {
+    font-size: 0.65rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #64748b;
+    margin-top: 3px;
+    font-weight: 600;
+}
+
+/* Measure Box */
+.measure-box {
+    border-right: 2px solid #334155;
+    padding: 6px 10px;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 80px;
+    position: relative;
+}
+
+.measure-box:first-child {
+    border-left: 2px solid #334155;
+}
+
+.measure-box.active-measure {
+    background-color: rgba(254, 240, 138, 0.15);
+}
+
+.measure-number {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 0.65rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+/* Virtual Piano Keyboard - Standard 88 Keys (A0 - C8) */
+.piano-keyboard-container {
+    overflow-x: auto;
+    padding: 14px 8px;
+    background: #090d16;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    scroll-behavior: smooth;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.piano-keyboard {
+    position: relative;
+    height: 148px;
+    display: inline-flex;
+    user-select: none;
+    min-width: max-content;
+}
+
+.white-key {
+    width: 23px;
+    min-width: 23px;
+    height: 144px;
+    background: linear-gradient(to bottom, #fdfdfd 0%, #ebebeb 85%, #d6d6d6 100%);
+    border: 1px solid #b5bfc9;
+    border-radius: 0 0 4px 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 5px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #1e293b;
+    cursor: pointer;
+    transition: background-color 0.1s, transform 0.05s;
+    z-index: 1;
+    position: relative;
+}
+
+.white-key:hover {
+    background: #f1f5f9;
+}
+
+.white-key.is-middle-c::before {
+    content: "";
+    position: absolute;
+    top: 7px;
+    width: 6px;
+    height: 6px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
+}
+
+.white-key.active-key,
+.white-key.active-key-rh {
+    background: linear-gradient(to bottom, #4ade80 0%, #16a34a 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.95), inset 0 -4px 6px rgba(0,0,0,0.3) !important;
+    border-color: #15803d !important;
+    transform: translateY(2px);
+    z-index: 10;
+}
+
+.white-key.active-key-lh {
+    background: linear-gradient(to bottom, #fb923c 0%, #ea580c 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(249, 115, 22, 0.95), inset 0 -4px 6px rgba(0,0,0,0.3) !important;
+    border-color: #c2410c !important;
+    transform: translateY(2px);
+    z-index: 10;
+}
+
+.black-key {
+    width: 14.5px;
+    min-width: 14.5px;
+    height: 92px;
+    background: linear-gradient(to bottom, #334155 0%, #111827 80%, #030712 100%);
+    border: 1px solid #000000;
+    border-radius: 0 0 3px 3px;
+    position: absolute;
+    z-index: 2;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 3px;
+    font-size: 0.5rem;
+    font-weight: 600;
+    color: #94a3b8;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.65);
+    transition: background-color 0.1s;
+}
+
+.black-key:hover {
+    background: #1e293b;
+}
+
+.black-key.active-key,
+.black-key.active-key-rh {
+    background: linear-gradient(to bottom, #22c55e 0%, #15803d 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.95) !important;
+    transform: translateY(2px);
+    z-index: 20;
+}
+
+.black-key.active-key-lh {
+    background: linear-gradient(to bottom, #f97316 0%, #c2410c 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(249, 115, 22, 0.95) !important;
+    transform: translateY(2px);
+    z-index: 20;
+}
+
+/* Vertical Playhead Scanner Line across Jianpu Notes */
+.sheet-playhead-scanner {
+    position: absolute;
+    width: 3.5px;
+    background: linear-gradient(to bottom, #10b981 0%, #06b6d4 50%, #f97316 100%);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.95), 0 0 18px rgba(6, 182, 212, 0.75);
+    pointer-events: none;
+    z-index: 25;
+    border-radius: 2px;
+    transition: left 0.12s linear, top 0.25s ease, height 0.25s ease;
+}
+
+.sheet-playhead-scanner::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: -4.5px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #10b981;
+    filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.95));
+}
+
+.sheet-playhead-scanner::after {
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: -4.5px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid #f97316;
+    filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.95));
+}
+
+.jianpu-key-num {
+    font-weight: 800;
+    font-size: 0.72rem;
+    line-height: 1.1;
+}
+
+/* Fit Mode (Full 88 keys scale to container width) */
+.piano-keyboard-container.fit-mode .piano-keyboard {
+    width: 100%;
+    min-width: 100%;
+    display: flex;
+}
+
+.piano-keyboard-container.fit-mode .white-key {
+    flex: 1 1 0;
+    width: auto !important;
+    min-width: 0 !important;
+    font-size: 0.5rem;
+    padding-bottom: 3px;
+}
+
+.piano-keyboard-container.fit-mode .black-key {
+    font-size: 0.38rem;
+    padding-bottom: 2px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Equalizer Bars & Disc Animation for Native Audio Player */
+@keyframes eqPulse {
+    0%, 100% { height: 4px; opacity: 0.6; }
+    50% { height: 22px; opacity: 1; }
+}
+
+@keyframes spinDisc {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.eq-bar {
+    transition: height 0.15s ease, opacity 0.15s ease;
+}
+
+.is-playing-audio .eq-bar:nth-child(1) { animation: eqPulse 0.55s infinite ease-in-out; }
+.is-playing-audio .eq-bar:nth-child(2) { animation: eqPulse 0.75s infinite ease-in-out 0.1s; }
+.is-playing-audio .eq-bar:nth-child(3) { animation: eqPulse 0.5s infinite ease-in-out 0.2s; }
+.is-playing-audio .eq-bar:nth-child(4) { animation: eqPulse 0.85s infinite ease-in-out 0.15s; }
+.is-playing-audio .eq-bar:nth-child(5) { animation: eqPulse 0.65s infinite ease-in-out 0.25s; }
+.is-playing-audio .eq-bar:nth-child(6) { animation: eqPulse 0.5s infinite ease-in-out 0.05s; }
+.is-playing-audio .eq-bar:nth-child(7) { animation: eqPulse 0.8s infinite ease-in-out 0.18s; }
+
+.is-playing-audio #trim-disc-icon-wrap {
+    animation: spinDisc 4s linear infinite;
+}
+
+/* Print Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #sheet-print-area, #sheet-print-area * {
+        visibility: visible;
+    }
+    #sheet-print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+    }
+    .no-print {
+        display: none !important;
+    }
+}

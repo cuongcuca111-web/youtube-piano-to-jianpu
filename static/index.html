@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JianpuPiano AI - Chuyển đổi YouTube sang Sheet Giản Phổ (1=Đô, 2=Rê, 3=Mi...)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-[#0a0e17] text-slate-100 flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-white/10 bg-[#0d1322]/80 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-slate-900 font-extrabold text-xl">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-emerald-400 bg-clip-text text-transparent">
+                        JianpuPiano AI
+                    </h1>
+                    <p class="text-[11px] text-slate-400">YouTube Piano → Sheet Nhạc Giản Phổ (1 2 3 4 5 6 7)</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Guide button -->
+                <button onclick="document.getElementById('guide-modal').classList.remove('hidden')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center space-x-1.5 border border-white/5">
+                    <i class="fa-solid fa-book-open text-emerald-400"></i>
+                    <span>Cách Đọc Giản Phổ</span>
+                </button>
+
+                <!-- Gemini API status badge -->
+                <div id="key-status-badge" onclick="openApiKeyModal()" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-950 text-amber-300 border border-amber-700/50 cursor-pointer hover:bg-amber-900/60 transition">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span>
+                    Cấu hình Gemini AI
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Input Console -->
+        <section class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+            <div class="max-w-3xl mx-auto text-center mb-6">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">
+                    Dán Link Video Piano YouTube
+                </h2>
+                <p class="text-sm text-slate-400">
+                    Hệ thống sẽ quét audio, phân tích cao độ và dịch ra bản nhạc dạng số 
+                    <span class="text-emerald-400 font-semibold">(Đô = 1, Rê = 2, Mi = 3, Pha = 4, Sol = 5, La = 6, Si = 7)</span>
+                </p>
+            </div>
+
+            <!-- YouTube Input Form -->
+            <form id="transcribe-form" class="max-w-3xl mx-auto">
+                <div class="flex flex-col sm:flex-row items-center gap-2 bg-[#090d16] p-2 rounded-xl border border-white/10 focus-within:border-emerald-500/70 transition shadow-2xl">
+                    <div class="flex items-center pl-3 text-red-500 text-xl">
+                        <i class="fa-brands fa-youtube"></i>
+                    </div>
+                    <input 
+                        type="url" 
+                        id="youtube-url-input"
+                        placeholder="Dán đường dẫn YouTube tại đây (Ví dụ: https://www.youtube.com/watch?v=...)" 
+                        required
+                        class="flex-1 bg-transparent px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none w-full"
+                    >
+                    <button 
+                        type="submit" 
+                        class="w-full sm:w-auto px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/25 shrink-0"
+                    >
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Quét & Tạo Sheet</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick Try Pills & Alternative Upload -->
+            <div class="max-w-3xl mx-auto mt-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div class="flex flex-wrap items-center gap-1.5 text-slate-400">
+                    <span class="font-medium text-slate-500 mr-1"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i>Thử nhanh:</span>
+                    <button onclick="trySample('canon_in_d')" class="px-2.5 py-1 rounded-md bg-slate-800/80 hover:bg-emerald-950 hover:text-emerald-300 text-slate-300 border border-white/5 transition">Canon in D</button>
+                    <button onclick="trySample('fur_elise')" class="px-2.5 py-1 rounded-md bg-slate-800/80 hover:bg-emerald-950 hover:text-emerald-300 text-slate-300 border border-white/5 transition">Für Elise</button>
+                    <button onclick="trySample('river_flows_in_you')" class="px-2.5 py-1 rounded-md bg-slate-800/80 hover:bg-emerald-950 hover:text-emerald-300 text-slate-300 border border-white/5 transition">River Flows in You</button>
+                    <button onclick="trySample('gap_me_trong_mo')" class="px-2.5 py-1 rounded-md bg-slate-800/80 hover:bg-emerald-950 hover:text-emerald-300 text-slate-300 border border-white/5 transition">Gặp Mẹ Trong Mơ</button>
+                    <button onclick="trySample('see_you_again')" class="px-2.5 py-1 rounded-md bg-slate-800/80 hover:bg-emerald-950 hover:text-emerald-300 text-slate-300 border border-white/5 transition">See You Again</button>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <label for="file-upload-input" class="cursor-pointer text-slate-400 hover:text-emerald-300 transition flex items-center space-x-1">
+                        <i class="fa-solid fa-file-audio"></i>
+                        <span>Tải file MP3/MIDI</span>
+                    </label>
+                    <input type="file" id="file-upload-input" accept=".mp3,.wav,.m4a,.mid,.midi" class="hidden">
+                </div>
+            </div>
+        </section>
+
+        <!-- Video Preview Card (Shows when YouTube scanned) -->
+        <div id="video-preview-card" class="hidden glass-panel rounded-xl p-4 flex flex-col sm:flex-row items-center gap-4">
+            <img id="video-thumb-img" src="" alt="Thumbnail" class="w-full sm:w-44 h-24 object-cover rounded-lg border border-white/10 shrink-0 shadow">
+            <div class="flex-1">
+                <div class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950/80 text-red-400 border border-red-800/40 mb-1">
+                    <i class="fa-brands fa-youtube mr-1"></i> YouTube Video
+                </div>
+                <h3 id="video-preview-title" class="font-bold text-white text-base line-clamp-1"></h3>
+                <p id="video-preview-channel" class="text-xs text-slate-400"></p>
+                <p class="text-[11px] text-emerald-400 mt-1"><i class="fa-solid fa-check-circle mr-1"></i> Đã trích xuất & chuyển đổi thành công sang nhạc phổ Giản Phổ</p>
+            </div>
+        </div>
+
+        <!-- Controls & Customization Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 glass-panel rounded-xl p-4">
+            <!-- Left: Metadata badges -->
+            <div class="flex items-center space-x-2">
+                <span class="text-xs text-slate-400">Giọng (Key):</span>
+                <select id="key-select" onchange="transposeKey(this.value)" class="bg-slate-900 border border-white/10 text-emerald-400 font-bold text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-emerald-500">
+                    <option value="C">1 = C (Đô Trưởng)</option>
+                    <option value="D">1 = D (Rê Trưởng)</option>
+                    <option value="Eb">1 = E♭ (Mi Giáng)</option>
+                    <option value="E">1 = E (Mi Trưởng)</option>
+                    <option value="F">1 = F (Fa Trưởng)</option>
+                    <option value="G">1 = G (Sol Trưởng)</option>
+                    <option value="A">1 = A (La Trưởng)</option>
+                    <option value="Bb">1 = B♭ (Si Giáng)</option>
+                    <option value="B">1 = B (Si Trưởng)</option>
+                </select>
+
+                <div class="h-4 w-[1px] bg-white/10 mx-1"></div>
+
+                <div class="flex items-center space-x-1.5 text-xs">
+                    <span id="time-sig-badge" class="px-2 py-1 rounded bg-slate-900 border border-white/10 text-slate-300 font-semibold">4/4</span>
+                    <span id="tempo-badge" class="px-2 py-1 rounded bg-slate-900 border border-white/10 text-slate-300 font-semibold">80 BPM</span>
+                </div>
+            </div>
+
+            <!-- Middle: Hand mode selector -->
+            <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-white/10">
+                <button onclick="setHandMode('both')" data-mode="both" class="hand-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white shadow-sm">
+                    Cả 2 Tay (Giai điệu + Hợp âm)
+                </button>
+                <button onclick="setHandMode('rh')" data-mode="rh" class="hand-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-300 hover:bg-slate-800">
+                    Chỉ Tay Phải (Giai điệu)
+                </button>
+            </div>
+
+            <!-- Right: Export buttons -->
+            <div class="flex items-center space-x-2">
+                <button onclick="printSheet()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white transition flex items-center space-x-1.5 border border-white/10" title="In ra giấy A4">
+                    <i class="fa-solid fa-print"></i>
+                    <span>In Sheet</span>
+                </button>
+                <button onclick="copyJianpuText()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white transition flex items-center space-x-1.5 border border-white/10" title="Sao chép văn bản dạng số">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Chép Text</span>
+                </button>
+                <button onclick="downloadMidi()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-950 text-emerald-300 hover:bg-emerald-900 border border-emerald-700/50 transition flex items-center space-x-1.5" title="Tải file MIDI về máy">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>Tải MIDI</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sheet Music Viewport (Styled as Paper Sheet) -->
+        <div id="sheet-print-area" class="sheet-container p-6 sm:p-10 border border-slate-300">
+            <!-- Sheet Header -->
+            <div class="text-center border-b border-slate-300 pb-4 mb-6">
+                <h2 id="song-title" class="sheet-title text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    Canon in D
+                </h2>
+                <p id="song-artist" class="text-sm text-slate-600 mt-1 font-medium">Johann Pachelbel</p>
+                <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-xs text-slate-700 mt-3 font-mono font-bold">
+                    <span>Giọng: <strong id="key-sig-badge" class="text-emerald-700">1 = D</strong></span>
+                    <span>•</span>
+                    <span>Nhịp: <span id="sheet-time-sig">4/4</span></span>
+                    <span>•</span>
+                    <span>Tốc độ: <span id="sheet-tempo">74 BPM</span></span>
+                    <span id="sheet-trim-badge-wrap" class="hidden">
+                        <span>•</span>
+                        <span class="bg-teal-100 text-teal-800 px-2 py-0.5 rounded text-[11px] font-sans font-semibold border border-teal-300">
+                            <i class="fa-solid fa-scissors mr-1"></i> Đoạn: <span id="sheet-trim-range">0:00 - 2:00</span>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Jianpu Measure Staves with Playhead Scanner Line -->
+            <div id="jianpu-sheet-content" class="relative flex flex-wrap items-start gap-y-4">
+                <!-- Vertical Scanning Laser Line -->
+                <div id="sheet-scanner-line" class="sheet-playhead-scanner hidden"></div>
+                <!-- Rendered dynamically by JavaScript -->
+            </div>
+
+            <!-- Sheet Footer Notes -->
+            <div class="mt-8 pt-4 border-t border-slate-200 text-[11px] text-slate-500 flex flex-wrap justify-between items-center font-mono">
+                <div>Quy ước: 1=Đô, 2=Rê, 3=Mi, 4=Pha, 5=Sol, 6=La, 7=Si | 1̇ (chấm trên: quãng 8 cao) | 1̣ (chấm dưới: quãng 8 trầm) | 0: Dấu nghỉ</div>
+                <div>Tạo bởi JianpuPiano AI</div>
+            </div>
+        </div>
+
+        <!-- Live Piano Player & Full 88-Key Keyboard Visualizer -->
+        <section class="glass-panel rounded-2xl p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <!-- Play / Pause Button -->
+                    <button id="play-btn" onclick="togglePlayback()" class="w-12 h-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center text-lg font-bold shadow-lg shadow-emerald-500/30 transition">
+                        <i id="play-btn-icon" class="fa-solid fa-play"></i>
+                    </button>
+                    <!-- Replay Button -->
+                    <button onclick="replaySong()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm border border-white/10 transition" title="Phát lại từ đầu">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span id="play-btn-text" class="font-bold text-sm text-white">Phát Bản Nhạc</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800/40">
+                                88 Phím Chuẩn (A0 - C8)
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">Âm thanh Piano mộc thực tế & đồng bộ phím đàn</p>
+                    </div>
+                </div>
+
+                <!-- Right controls: Navigation & Speed -->
+                <div class="flex flex-wrap items-center gap-3 text-xs">
+                    <!-- Quick Jump buttons across 88 keys -->
+                    <div class="flex items-center bg-slate-900/90 p-1 rounded-lg border border-white/10 space-x-1">
+                        <span class="text-[10px] text-slate-500 px-1 font-semibold">Vùng phím:</span>
+                        <button onclick="scrollToPianoSection('bass')" class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Cuộn đến vùng nốt trầm A0 - B2">
+                            Trầm (A0)
+                        </button>
+                        <button onclick="scrollToPianoSection('mid')" class="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-950 text-emerald-300 border border-emerald-700/50 hover:bg-emerald-900 transition" title="Cuộn đến nốt Đô trung tâm C4">
+                            Đô C4 (Giữa)
+                        </button>
+                        <button onclick="scrollToPianoSection('treble')" class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Cuộn đến vùng nốt cao C6 - C8">
+                            Cao (C8)
+                        </button>
+                    </div>
+
+                    <!-- Speed Control -->
+                    <div class="flex items-center space-x-1.5 bg-slate-900/90 p-1 rounded-lg border border-white/10">
+                        <span class="text-slate-400 text-[11px] px-1">Tốc độ:</span>
+                        <button onclick="setSpeed(0.75, this)" class="speed-btn px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300 border border-white/5">0.75x</button>
+                        <button onclick="setSpeed(1.0, this)" class="speed-btn px-2 py-0.5 rounded text-[11px] bg-emerald-600 text-white font-bold border border-emerald-500">1.0x</button>
+                        <button onclick="setSpeed(1.25, this)" class="speed-btn px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300 border border-white/5">1.25x</button>
+                    </div>
+
+                    <!-- Fullscreen / Fit Toggle -->
+                    <button id="toggle-fit-btn" onclick="togglePianoFitMode()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-white/10 transition flex items-center space-x-1" title="Chuyển đổi giữa chế độ cuộn ngang và thu nhỏ vừa màn hình">
+                        <i class="fa-solid fa-arrows-left-right text-emerald-400"></i>
+                        <span id="toggle-fit-text">Thu Vừa Khung</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Virtual 88-Key Piano Keyboard -->
+            <div id="piano-keyboard-scroll-wrap" class="piano-keyboard-container">
+                <div id="piano-keyboard" class="piano-keyboard">
+                    <!-- 88 Keys from A0 (21) to C8 (108) rendered dynamically by JavaScript -->
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between text-[11px] text-slate-400 px-1">
+                <p>
+                    <i class="fa-solid fa-hand-pointer mr-1 text-emerald-400"></i> Bấm trực tiếp vào bất kỳ phím nào trong 88 phím để nghe âm thanh piano và luyện tập!
+                </p>
+                <div class="flex items-center space-x-3 text-[10px]">
+                    <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-400 mr-1"></span> Nốt tay phải</span>
+                    <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-sm bg-amber-400 mr-1"></span> Phím đen</span>
+                    <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 mr-1"></span> C4 (Đô Giữa)</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-4 text-center text-xs text-slate-500">
+        JianpuPiano AI © 2026 - Bộ chuyển đổi Video Piano sang Sheet nhạc Giản Phổ trực quan.
+    </footer>
+
+    <!-- 01 TRIM THE VIDEO MODAL (Interactive Start/End Trimmer) -->
+    <div id="trim-video-modal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div class="glass-panel bg-[#0d1322] border border-white/10 rounded-2xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl space-y-5 my-auto">
+            
+            <!-- Top Step Indicator like user reference screenshot -->
+            <div class="flex items-center justify-center space-x-3 text-xs tracking-widest text-slate-400 font-semibold uppercase">
+                <span class="w-12 h-[1px] bg-white/15"></span>
+                <span class="text-teal-400 font-mono">01</span>
+                <span class="text-white">TRIM THE VIDEO</span>
+                <span class="w-12 h-[1px] bg-white/15"></span>
+            </div>
+            <p class="text-center text-xs text-slate-400">
+                Kéo 2 chốt mốc thời gian để chọn chính xác đoạn nhạc bạn muốn AI quét & tạo sheet
+            </p>
+
+            <!-- Video / Audio Player Container with Dual-Mode Support -->
+            <div id="trim-player-container" class="relative w-full aspect-video rounded-xl overflow-hidden bg-[#070b14] border border-white/10 shadow-2xl">
+                
+                <!-- Mode 1: YouTube Iframe View -->
+                <div id="trim-iframe-view" class="w-full h-full relative">
+                    <iframe 
+                        id="trim-video-iframe" 
+                        src="" 
+                        class="w-full h-full border-0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+
+                <!-- Mode 2: Native Audio Visualizer Player View (shown when YouTube embed is blocked or toggled) -->
+                <div id="trim-audio-view" class="hidden absolute inset-0 w-full h-full flex flex-col justify-between p-4 sm:p-6 overflow-hidden">
+                    <!-- Blurred Poster Background -->
+                    <div id="trim-audio-poster-bg" class="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-30 pointer-events-none"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#070b14] via-[#070b14]/80 to-transparent pointer-events-none"></div>
+
+                    <!-- Top Status Badge -->
+                    <div class="relative z-10 flex items-center justify-between">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-950/90 text-emerald-300 border border-emerald-500/40 shadow-sm backdrop-blur">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+                            Trình Phát Âm Thanh Trực Tiếp AI
+                        </span>
+                        <span id="trim-audio-source-note" class="text-[10px] text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-white/10 backdrop-blur">
+                            Vượt qua giới hạn nhúng YouTube
+                        </span>
+                    </div>
+
+                    <!-- Center Visualizer Disc & Soundwaves -->
+                    <div class="relative z-10 flex flex-col items-center justify-center my-auto text-center space-y-3">
+                        <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-slate-900 border-2 border-emerald-500/50 shadow-[0_0_25px_rgba(16,185,129,0.3)] flex items-center justify-center overflow-hidden">
+                            <img id="trim-audio-disc-thumb" src="" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                            <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px]"></div>
+                            <div id="trim-disc-icon-wrap" class="relative z-10 text-emerald-400 text-2xl sm:text-3xl transition-transform duration-700">
+                                <i class="fa-solid fa-music"></i>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 id="trim-audio-title" class="font-bold text-white text-sm sm:text-base line-clamp-1 drop-shadow">Bản Piano YouTube</h4>
+                            <p id="trim-audio-artist" class="text-xs text-slate-300 font-medium">YouTube Channel</p>
+                        </div>
+
+                        <!-- Real-time Equalizer Waveform Bars -->
+                        <div id="trim-audio-bars" class="flex items-center space-x-1 h-6">
+                            <span class="eq-bar h-2 w-1 bg-emerald-400 rounded-full"></span>
+                            <span class="eq-bar h-5 w-1 bg-emerald-400 rounded-full"></span>
+                            <span class="eq-bar h-3 w-1 bg-teal-300 rounded-full"></span>
+                            <span class="eq-bar h-6 w-1 bg-teal-400 rounded-full"></span>
+                            <span class="eq-bar h-4 w-1 bg-emerald-400 rounded-full"></span>
+                            <span class="eq-bar h-2 w-1 bg-teal-300 rounded-full"></span>
+                            <span class="eq-bar h-5 w-1 bg-emerald-400 rounded-full"></span>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Live Status & Message -->
+                    <div class="relative z-10 flex items-center justify-between text-[11px] text-slate-300 pt-2 border-t border-white/10">
+                        <div class="flex items-center space-x-1.5">
+                            <i class="fa-solid fa-headphones text-teal-400"></i>
+                            <span id="trim-audio-live-status">Sẵn sàng nghe thử đoạn đã chọn</span>
+                        </div>
+                        <div class="font-mono font-bold text-teal-300">
+                            <span id="trim-audio-current-time">0:00</span> / <span id="trim-audio-end-time">2:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Title & Control Overlays -->
+                <div class="absolute top-2 left-2 right-2 flex justify-between items-center pointer-events-none z-20">
+                    <span id="trim-video-title" class="bg-black/75 backdrop-blur-md px-3 py-1 rounded-md text-xs font-bold text-white truncate max-w-[55%] border border-white/10 shadow"></span>
+                    
+                    <div class="flex items-center space-x-1.5 pointer-events-auto">
+                        <!-- Switch View Mode Button (YouTube Video vs Native Audio) -->
+                        <button 
+                            id="trim-toggle-view-btn" 
+                            onclick="toggleTrimPlayerMode()" 
+                            class="bg-black/75 hover:bg-slate-800 text-teal-300 hover:text-white px-2.5 py-1 rounded-md text-[11px] font-semibold border border-teal-500/30 flex items-center space-x-1 transition shadow backdrop-blur-md"
+                            title="Chuyển đổi giữa Video YouTube và Trình phát Audio Gốc"
+                        >
+                            <i id="trim-toggle-view-icon" class="fa-solid fa-headphones text-xs"></i>
+                            <span id="trim-toggle-view-text">Chuyển sang Audio</span>
+                        </button>
+
+                        <!-- Close Modal Button -->
+                        <button 
+                            onclick="closeTrimModal()" 
+                            class="bg-black/75 hover:bg-black text-slate-300 hover:text-white w-7 h-7 rounded-full flex items-center justify-center border border-white/10 transition shadow backdrop-blur-md"
+                        >
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden HTML5 Audio Player for 100% Reliable Audio Preview -->
+                <audio id="trim-native-audio" preload="auto" class="hidden"></audio>
+            </div>
+
+            <!-- Waveform & Dual Handle Trimmer -->
+            <div class="space-y-3 bg-[#080c14] p-4 rounded-xl border border-white/5">
+                <!-- Waveform Canvas / Bars Container -->
+                <div id="trim-waveform-wrap" class="relative w-full h-20 bg-slate-900/60 rounded-lg overflow-hidden flex items-center px-1 select-none cursor-pointer">
+                    <!-- Simulated Audio Waveform Bars -->
+                    <div id="trim-waveform-bars" class="absolute inset-0 flex items-center justify-between px-2 opacity-50 pointer-events-none">
+                        <!-- Soundwave bars dynamically generated by JS -->
+                    </div>
+
+                    <!-- Highlighted Active Trim Zone -->
+                    <div id="trim-selection-zone" class="absolute top-0 bottom-0 bg-teal-500/20 border-t-2 border-b-2 border-teal-400 transition-none z-10 cursor-grab active:cursor-grabbing">
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <span id="trim-duration-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-teal-900/80 text-teal-300 border border-teal-500/50">
+                                0:00 - 2:00
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Moving Playhead Scrubber -->
+                    <div id="trim-playhead" class="absolute top-0 bottom-0 w-[2px] bg-white shadow-[0_0_8px_#ffffff] z-30 pointer-events-none hidden">
+                        <div class="w-2.5 h-2.5 -ml-[4px] rounded-full bg-white shadow-[0_0_6px_#ffffff]"></div>
+                    </div>
+
+                    <!-- Left Handle (START) -->
+                    <div id="trim-handle-start" class="trim-handle absolute top-0 bottom-0 w-4 -ml-2 z-20 cursor-ew-resize flex flex-col items-center justify-center">
+                        <div class="w-1 h-full bg-teal-400 shadow-[0_0_8px_rgba(20,184,166,0.8)]"></div>
+                        <div class="absolute w-4 h-4 rounded-full bg-black border-2 border-teal-400 shadow flex items-center justify-center">
+                            <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+                        </div>
+                    </div>
+
+                    <!-- Right Handle (END) with Top Time Pill -->
+                    <div id="trim-handle-end" class="trim-handle absolute top-0 bottom-0 w-4 -ml-2 z-20 cursor-ew-resize flex flex-col items-center justify-center">
+                        <!-- Top Tag e.g. 2:00 -->
+                        <div class="absolute -top-1 bg-teal-600 text-slate-950 font-black text-[10px] px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap">
+                            <span id="trim-handle-end-text">2:00</span>
+                        </div>
+                        <div class="w-1 h-full bg-teal-400 shadow-[0_0_8px_rgba(20,184,166,0.8)]"></div>
+                        <div class="absolute w-4 h-4 rounded-full bg-black border-2 border-teal-400 shadow flex items-center justify-center">
+                            <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timing Controls Bar (START / PLAY / END) -->
+                <div class="flex items-center justify-between text-xs pt-1">
+                    <!-- Start Time -->
+                    <div class="flex flex-col items-start">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-1">START</span>
+                        <div class="flex items-center bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1">
+                            <input 
+                                type="text" 
+                                id="trim-start-input" 
+                                value="0:00" 
+                                onchange="onTrimInputChange()" 
+                                class="w-12 bg-transparent text-white font-mono text-xs font-bold text-center focus:outline-none"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Center Preview Play Button -->
+                    <div class="flex flex-col items-center">
+                        <button 
+                            id="trim-preview-play-btn" 
+                            onclick="toggleTrimPreviewPlay()" 
+                            class="w-11 h-11 rounded-full bg-teal-600 hover:bg-teal-500 text-slate-950 flex items-center justify-center text-sm font-bold shadow-lg shadow-teal-500/30 transition"
+                            title="Nghe thử đoạn đã chọn"
+                        >
+                            <i id="trim-play-icon" class="fa-solid fa-play ml-0.5"></i>
+                        </button>
+                        <span class="text-[10px] text-slate-400 mt-1">Nghe thử</span>
+                    </div>
+
+                    <!-- End Time -->
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-1">END</span>
+                        <div class="flex items-center bg-slate-900 border border-white/10 rounded-lg px-2.5 py-1">
+                            <input 
+                                type="text" 
+                                id="trim-end-input" 
+                                value="2:00" 
+                                onchange="onTrimInputChange()" 
+                                class="w-12 bg-transparent text-white font-mono text-xs font-bold text-center focus:outline-none"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="flex flex-wrap items-center justify-center gap-1.5 pt-2 border-t border-white/5 text-[11px]">
+                    <span class="text-slate-500 mr-1 text-[10px]">Chọn nhanh:</span>
+                    <button onclick="setTrimPreset(0, 30)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">0:00 - 0:30</button>
+                    <button onclick="setTrimPreset(0, 60)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">0:00 - 1:00</button>
+                    <button onclick="setTrimPreset(0, 120)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">0:00 - 2:00</button>
+                    <button onclick="setTrimPreset(0, null)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Toàn Bộ Video</button>
+                </div>
+            </div>
+
+            <!-- Action Continue Button (just like user reference image) -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <button 
+                    onclick="confirmTrimAndTranscribe()" 
+                    class="w-full sm:w-auto px-10 py-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-slate-950 font-extrabold text-sm shadow-xl shadow-teal-500/25 transition flex items-center justify-center space-x-2"
+                >
+                    <span>Continue</span>
+                    <i class="fa-solid fa-arrow-down"></i>
+                </button>
+                <button 
+                    onclick="skipTrimAndTranscribeAll()" 
+                    class="w-full sm:w-auto px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition"
+                >
+                    Bỏ qua cắt, quét toàn bài →
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Loading Progress Overlay with % and Step Milestones -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="glass-panel bg-[#0d1322] border border-white/10 rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-5 relative overflow-hidden">
+            
+            <!-- Modal Header with Stage Name & Big Animated Percentage -->
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                        <i id="progress-icon" class="fa-solid fa-wand-magic-sparkles text-lg animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-white text-base tracking-tight">Tiến Độ Quét & Biên Dịch</h3>
+                        <p id="progress-stage-name" class="text-xs text-slate-400 font-medium">Đang khởi tạo...</p>
+                    </div>
+                </div>
+
+                <!-- Big Glowing Percentage Display -->
+                <div class="text-right">
+                    <span id="progress-percent-number" class="text-3xl sm:text-4xl font-black tracking-tight text-emerald-400 drop-shadow-[0_0_14px_rgba(16,185,129,0.45)]">0%</span>
+                </div>
+            </div>
+
+            <!-- Video Info Preview (shows thumbnail and title when extracted) -->
+            <div id="progress-video-mini" class="hidden flex items-center space-x-3 bg-slate-900/80 p-2.5 rounded-xl border border-white/5">
+                <img id="progress-video-mini-thumb" src="" class="w-14 h-10 object-cover rounded-md border border-white/10 shrink-0">
+                <div class="min-w-0 flex-1">
+                    <h4 id="progress-video-mini-title" class="text-xs font-bold text-white truncate"></h4>
+                    <p id="progress-video-mini-channel" class="text-[10px] text-slate-400 truncate"></p>
+                </div>
+            </div>
+
+            <!-- Linear Glowing Progress Bar -->
+            <div class="space-y-2">
+                <div class="w-full h-3.5 bg-slate-900/90 rounded-full overflow-hidden p-0.5 border border-white/10 shadow-inner">
+                    <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-teal-500 via-emerald-400 to-green-400 rounded-full transition-all duration-300 ease-out shadow-[0_0_12px_rgba(16,185,129,0.7)]" style="width: 0%;"></div>
+                </div>
+                <div class="flex justify-between items-center text-[11px] text-slate-400 px-0.5">
+                    <span id="loading-msg" class="truncate pr-2 font-medium text-slate-300">Đang chuẩn bị quét video...</span>
+                    <span id="progress-detail" class="font-mono text-emerald-400 font-semibold shrink-0">0%</span>
+                </div>
+            </div>
+
+            <!-- 4 Step Milestones -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+                <!-- Step 1 -->
+                <div id="step-1" class="step-card p-2.5 rounded-xl bg-slate-900/60 border border-white/5 transition-all flex flex-col items-center text-center">
+                    <div class="step-icon w-7 h-7 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center mb-1 text-xs transition">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                    <span class="font-semibold text-[11px] text-slate-300">1. Kết Nối</span>
+                    <span class="step-status text-[9px] text-slate-500 mt-0.5">Chờ xử lý</span>
+                </div>
+
+                <!-- Step 2 -->
+                <div id="step-2" class="step-card p-2.5 rounded-xl bg-slate-900/60 border border-white/5 transition-all flex flex-col items-center text-center">
+                    <div class="step-icon w-7 h-7 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center mb-1 text-xs transition">
+                        <i class="fa-solid fa-download"></i>
+                    </div>
+                    <span class="font-semibold text-[11px] text-slate-300">2. Tải Audio</span>
+                    <span class="step-status text-[9px] text-slate-500 mt-0.5">Chờ xử lý</span>
+                </div>
+
+                <!-- Step 3 -->
+                <div id="step-3" class="step-card p-2.5 rounded-xl bg-slate-900/60 border border-white/5 transition-all flex flex-col items-center text-center">
+                    <div class="step-icon w-7 h-7 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center mb-1 text-xs transition">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <span class="font-semibold text-[11px] text-slate-300">3. Phân Tích AI</span>
+                    <span class="step-status text-[9px] text-slate-500 mt-0.5">Chờ xử lý</span>
+                </div>
+
+                <!-- Step 4 -->
+                <div id="step-4" class="step-card p-2.5 rounded-xl bg-slate-900/60 border border-white/5 transition-all flex flex-col items-center text-center">
+                    <div class="step-icon w-7 h-7 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center mb-1 text-xs transition">
+                        <i class="fa-solid fa-music"></i>
+                    </div>
+                    <span class="font-semibold text-[11px] text-slate-300">4. Tạo Sheet</span>
+                    <span class="step-status text-[9px] text-slate-500 mt-0.5">Chờ xử lý</span>
+                </div>
+            </div>
+
+            <!-- Cancel Button -->
+            <div class="flex justify-end pt-1">
+                <button onclick="cancelTranscription()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition border border-white/5 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-xmark"></i>
+                    <span>Hủy Bỏ</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div id="api-key-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass-panel bg-[#0d1322] border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-white text-base flex items-center">
+                    <i class="fa-solid fa-key text-emerald-400 mr-2"></i> Cấu hình Google Gemini AI
+                </h3>
+                <button onclick="closeApiKeyModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Nhập <strong>Google Gemini API Key</strong> để cho phép AI nghe trực tiếp mọi video YouTube piano bất kỳ và tự động bóc tách từng phách nốt!
+            </p>
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1">Gemini API Key:</label>
+                <input 
+                    type="password" 
+                    id="api-key-input" 
+                    placeholder="AIzaSy..." 
+                    class="w-full bg-slate-950 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                >
+                <p class="text-[11px] text-slate-500 mt-1">
+                    Chưa có Key? Lấy miễn phí tại <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-emerald-400 underline">Google AI Studio</a>. Key được lưu an toàn trên trình duyệt của bạn (localStorage).
+                </p>
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeApiKeyModal()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Hủy</button>
+                <button id="save-api-key-btn" class="px-4 py-2 rounded-lg text-xs font-semibold bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400">Lưu Key</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jianpu Guide Modal -->
+    <div id="guide-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass-panel bg-[#0d1322] border border-white/10 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="font-bold text-white text-base flex items-center">
+                    <i class="fa-solid fa-graduation-cap text-emerald-400 mr-2"></i> Hướng Dẫn Đọc Nhạc Giản Phổ (Jianpu)
+                </h3>
+                <button onclick="document.getElementById('guide-modal').classList.add('hidden')" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-300 leading-relaxed font-sans">
+                <div class="bg-slate-900/80 p-3 rounded-lg border border-white/5">
+                    <h4 class="font-bold text-emerald-400 mb-1 text-sm">1. Quy ước 7 nốt nhạc cơ bản:</h4>
+                    <p class="font-mono text-sm">
+                        <strong class="text-white">1</strong> = Đô (C) &nbsp;|&nbsp;
+                        <strong class="text-white">2</strong> = Rê (D) &nbsp;|&nbsp;
+                        <strong class="text-white">3</strong> = Mi (E) &nbsp;|&nbsp;
+                        <strong class="text-white">4</strong> = Pha (F) &nbsp;|&nbsp;
+                        <strong class="text-white">5</strong> = Sol (G) &nbsp;|&nbsp;
+                        <strong class="text-white">6</strong> = La (A) &nbsp;|&nbsp;
+                        <strong class="text-white">7</strong> = Si (B) &nbsp;|&nbsp;
+                        <strong class="text-amber-400">0</strong> = Nghỉ (Dấu lặng)
+                    </p>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-lg border border-white/5">
+                    <h4 class="font-bold text-emerald-400 mb-1 text-sm">2. Quãng tám (Cao độ):</h4>
+                    <ul class="list-disc pl-4 space-y-1">
+                        <li>Không có chấm: Quãng tám trung tâm (C4 - B4).</li>
+                        <li>Dấu chấm <strong>trên đầu (1̇, 2̇, 3̇...)</strong>: Quãng tám cao (+1 Octave).</li>
+                        <li>Dấu 2 chấm trên đầu (1̈): Quãng tám rất cao (+2 Octaves).</li>
+                        <li>Dấu chấm <strong>dưới chân (1̣, 2̣, 3̣...)</strong>: Quãng tám trầm (-1 Octave).</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900/80 p-3 rounded-lg border border-white/5">
+                    <h4 class="font-bold text-emerald-400 mb-1 text-sm">3. Giá trị trường độ (Phách):</h4>
+                    <ul class="list-disc pl-4 space-y-1">
+                        <li>Nốt đen (1 phách): Viết bình thường: <code class="text-white font-mono">1</code></li>
+                        <li>Nốt trắng (2 phách): Thêm 1 gạch ngang: <code class="text-white font-mono">1 -</code></li>
+                        <li>Nốt tròn (4 phách): Thêm 3 gạch ngang: <code class="text-white font-mono">1 - - -</code></li>
+                        <li>Móc đơn (1/2 phách): Có 1 gạch dưới chân: <code class="text-white font-mono underline">1</code></li>
+                        <li>Móc kép (1/4 phách): Có 2 gạch dưới chân.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-right pt-2 border-t border-white/10">
+                <button onclick="document.getElementById('guide-modal').classList.add('hidden')" class="px-4 py-2 rounded-lg text-xs font-semibold bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400">Đã Hiểu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for Speed Control -->
+    <script>
+        function setSpeed(speed, btn) {
+            state.tempoMultiplier = speed;
+            document.querySelectorAll('.speed-btn').forEach(b => {
+                b.className = 'speed-btn px-2 py-1 rounded bg-slate-800 text-slate-300 border border-white/5';
+            });
+            btn.className = 'speed-btn px-2 py-1 rounded bg-emerald-600 text-white font-bold border border-emerald-500';
+        }
+    </script>
+    <!-- App Logic -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
