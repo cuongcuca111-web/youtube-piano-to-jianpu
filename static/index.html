@@ -544,7 +544,12 @@
                     </div>
                     <div>
                         <h3 class="font-extrabold text-white text-base tracking-tight">Tiến Độ Quét & Biên Dịch</h3>
-                        <p id="progress-stage-name" class="text-xs text-slate-400 font-medium">Đang khởi tạo...</p>
+                        <div class="flex items-center space-x-2 mt-0.5">
+                            <span id="progress-stage-name" class="text-xs text-slate-400 font-medium">Đang khởi tạo...</span>
+                            <span id="progress-timer" class="text-[10px] font-mono text-emerald-400 bg-emerald-950/70 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center">
+                                <i class="fa-regular fa-clock mr-1"></i><span id="progress-timer-text">00:00</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -566,7 +571,7 @@
             <!-- Linear Glowing Progress Bar -->
             <div class="space-y-2">
                 <div class="w-full h-3.5 bg-slate-900/90 rounded-full overflow-hidden p-0.5 border border-white/10 shadow-inner">
-                    <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-teal-500 via-emerald-400 to-green-400 rounded-full transition-all duration-300 ease-out shadow-[0_0_12px_rgba(16,185,129,0.7)]" style="width: 0%;"></div>
+                    <div id="progress-bar-fill" class="h-full progress-bar-animated bg-gradient-to-r from-teal-500 via-emerald-400 to-green-400 rounded-full transition-all duration-300 ease-out shadow-[0_0_12px_rgba(16,185,129,0.7)]" style="width: 0%;"></div>
                 </div>
                 <div class="flex justify-between items-center text-[11px] text-slate-400 px-0.5">
                     <span id="loading-msg" class="truncate pr-2 font-medium text-slate-300">Đang chuẩn bị quét video...</span>

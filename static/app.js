@@ -240,15 +240,42 @@ function setProgress(percent, message, step = 1, stageName = "Đang xử lý..."
     }
 }
 
+let progressStartTime = 0;
+let progressTimerInterval = null;
+
+function startProgressTimer() {
+    stopProgressTimer();
+    progressStartTime = Date.now();
+    const timerText = document.getElementById('progress-timer-text');
+    if (timerText) timerText.textContent = "00:00";
+    progressTimerInterval = setInterval(() => {
+        const elapsedSec = Math.floor((Date.now() - progressStartTime) / 1000);
+        const mins = Math.floor(elapsedSec / 60);
+        const secs = elapsedSec % 60;
+        const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        const el = document.getElementById('progress-timer-text');
+        if (el) el.textContent = formatted;
+    }, 1000);
+}
+
+function stopProgressTimer() {
+    if (progressTimerInterval) {
+        clearInterval(progressTimerInterval);
+        progressTimerInterval = null;
+    }
+}
+
 function showProgressModal(stageName = "Bắt đầu quét...") {
     const el = document.getElementById('loading-overlay');
     if (el) el.classList.remove('hidden');
     const mini = document.getElementById('progress-video-mini');
     if (mini) mini.classList.add('hidden');
+    startProgressTimer();
     setProgress(0, "Đang kết nối...", 1, stageName);
 }
 
 function hideProgressModal() {
+    stopProgressTimer();
     const el = document.getElementById('loading-overlay');
     if (el) el.classList.add('hidden');
 }

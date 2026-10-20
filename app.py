@@ -619,25 +619,47 @@ async def transcribe_youtube_stream(req: TranscribeRequest):
                 yield f"data: {json.dumps({'percent': 68, 'step': 3, 'stage': 'ai_uploading', 'stageName': 'Gửi dữ liệu AI', 'message': 'Đang tải âm thanh lên Google Gemini AI...'}, ensure_ascii=False)}\n\n"
                 await asyncio.sleep(0.2)
 
-                yield f"data: {json.dumps({'percent': 80, 'step': 3, 'stage': 'ai_analyzing', 'stageName': 'Phân tích cao độ', 'message': 'Gemini AI đang lắng nghe và bóc tách từng cao độ piano...'}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'percent': 75, 'step': 3, 'stage': 'ai_analyzing', 'stageName': 'Phân tích cao độ', 'message': 'Khởi động Gemini AI và cắt đoạn âm thanh...'}, ensure_ascii=False)}\n\n"
 
                 gemini_result = None
                 try:
-                    gemini_result = await asyncio.to_thread(
-                        transcribe_with_gemini,
-                        audio_file_path,
-                        api_key,
-                        video_title,
-                        req.startTime or 0.0,
-                        req.endTime,
-                        FFMPEG_BIN
+                    # Run Gemini transcription as an asynchronous task with heartbeat progress
+                    transcribe_task = asyncio.create_task(
+                        asyncio.to_thread(
+                            transcribe_with_gemini,
+                            audio_file_path,
+                            api_key,
+                            video_title,
+                            req.startTime or 0.0,
+                            req.endTime,
+                            FFMPEG_BIN
+                        )
                     )
+
+                    sub_steps = [
+                        (78, "Đang bóc tách phổ tần số và phát hiện giọng (Key)..."),
+                        (81, "Đang lắng nghe giai điệu bè cao tay phải (Treble Melody)..."),
+                        (84, "Đang trích xuất chuỗi hợp âm bè trầm tay trái (Bass Chords)..."),
+                        (87, "Đang đo lường tiết tấu, phách nhịp và trường độ nốt..."),
+                        (90, "Đang chuẩn hóa nốt Giản Phổ (1=Đô, 2=Rê, 3=Mi)..."),
+                        (93, "Đang cấu trúc hóa các ô nhịp và hoàn tất bản nhạc...")
+                    ]
+
+                    step_idx = 0
+                    while not transcribe_task.done():
+                        await asyncio.sleep(1.3)
+                        if not transcribe_task.done() and step_idx < len(sub_steps):
+                            p_val, p_msg = sub_steps[step_idx]
+                            yield f"data: {json.dumps({'percent': p_val, 'step': 3, 'stage': 'ai_analyzing', 'stageName': 'Gemini AI Đang Phân Tích', 'message': p_msg}, ensure_ascii=False)}\n\n"
+                            step_idx += 1
+
+                    gemini_result = await transcribe_task
                 except Exception as g_err:
                     logger.warning(f"Gemini transcription failed ({g_err}), falling back to database/pattern analysis.")
 
                 if gemini_result and isinstance(gemini_result, dict) and "measures" in gemini_result:
-                    yield f"data: {json.dumps({'percent': 92, 'step': 4, 'stage': 'rendering', 'stageName': 'Biên dịch Giản Phổ', 'message': 'Đang định dạng các ô nhịp và nốt Giản Phổ (1=Đô, 2=Rê)...'}, ensure_ascii=False)}\n\n"
-                    await asyncio.sleep(0.2)
+                    yield f"data: {json.dumps({'percent': 96, 'step': 4, 'stage': 'rendering', 'stageName': 'Biên dịch Giản Phổ', 'message': 'Đang định dạng các ô nhịp và nốt Giản Phổ (1=Đô, 2=Rê)...'}, ensure_ascii=False)}\n\n"
+                    await asyncio.sleep(0.15)
 
                     gemini_result["videoTitle"] = video_title
                     gemini_result["channel"] = video_channel
